@@ -10,7 +10,7 @@ def main():
     (duplicated_barcodes, unused_barcodes, orders_with_barcodes) = process_barcodes()
 
 
-    customer_orders = process_orders()
+    (customer_orders, wrong_orders) = process_orders(orders_with_barcodes)
     
     
     
@@ -30,16 +30,22 @@ def main():
 
 def process_orders(orders_with_barcodes):
     customer_orders = dict()
+    wrong_orders = set()
 
     with open('orders.csv') as csv_file:
         orders = csv.DictReader(csv_file, delimiter=',')
         for row_order in orders:
             order = row_order['order_id']
             customer = row_order['customer_id']
+
+            if order not in orders_with_barcodes.keys():
+                wrong_orders.add(order)
+                continue
+
             if customer not in customer_orders.keys():
                 customer_orders[customer] = []
             customer_orders[customer].append(order)
-    return customer_orders
+    return (customer_orders, wrong_orders)
 
 def process_barcodes():
     duplicated_barcodes = set()

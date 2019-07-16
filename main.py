@@ -9,17 +9,9 @@ def main():
     order_barcode = dict()
 
     (duplicated_barcodes, unused_barcodes, orders_with_barcodes) = process_barcodes()
-
-
     (customers_with_orders, wrong_orders) = process_orders(orders_with_barcodes)
     
-    
-    
-    customer_orders_with_barcodes = dict()
-    for customer, orders in customers_with_orders.items():
-        customer_orders_with_barcodes[customer] = {}
-        for order in orders:
-            customer_orders_with_barcodes[customer].update({order : orders_with_barcodes[order]})
+    customer_orders_with_barcodes = aggregate_data(customers_with_orders, orders_with_barcodes)
 
     for customer,orders in customer_orders_with_barcodes.items():
         for order, barcodes in orders.items():
@@ -27,6 +19,14 @@ def main():
                 print(customer + ',' + order + ',' + ','.join(barcodes))
             else:
                 print(customer + ',' + order + ',')
+
+def aggregate_data(customers_with_orders, orders_with_barcodes):
+    customer_orders_with_barcodes = {}
+    for customer, orders in customers_with_orders.items():
+        customer_orders_with_barcodes[customer] = {}
+        for order in orders:
+            customer_orders_with_barcodes[customer].update({order : orders_with_barcodes[order]})
+    return customer_orders_with_barcodes
 
 def process_orders(orders_with_barcodes):
     wrong_orders = set()

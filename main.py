@@ -19,9 +19,19 @@ def main():
     
     customer_orders_with_barcodes = aggregate_data(customers_with_orders, orders_with_barcodes)
 
-    write_results(customer_orders_with_barcodes, unused_barcodes)
+    top_customers = calculate_top_users(customers_with_orders)
 
-def write_results(customer_orders_with_barcodes, unused_barcodes):
+    write_results(customer_orders_with_barcodes, unused_barcodes, top_customers)
+
+def calculate_top_users(customers_with_orders, amount=5):
+    customers = list(map(lambda item:(item[0], len(item[1])), customers_with_orders.items()))
+    top_customers = sorted(customers, key=lambda item:item[1], reverse=True)[:amount]
+    return top_customers
+
+def write_results(customer_orders_with_barcodes, unused_barcodes, top_customers):
+    sys.stdout.write('The top 5 users were:\n')
+    sys.stdout.write('\n'.join(f'{x[0]}, {x[1]}' for x in top_customers) + '\n')
+
     for customer,orders in customer_orders_with_barcodes.items():
         for order, barcodes in orders.items():
             print(customer + ',' + order + ',' + ','.join(barcodes))

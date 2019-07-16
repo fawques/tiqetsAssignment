@@ -3,12 +3,7 @@ import sys
 import csv
 from collections import defaultdict
 
-def main():
-    unique_barcodes = set()
-    duplicated_barcodes = set()
-    unused_barcodes = set()
-    order_barcode = dict()
-
+def main(output_file):
     (duplicated_barcodes, unused_barcodes, orders_with_barcodes) = process_barcodes()
     if duplicated_barcodes:
         sys.stderr.write("Ignoring duplicated barcodes:\n" + '\n'.join(duplicated_barcodes) + '\n')
@@ -21,14 +16,14 @@ def main():
 
     top_customers = calculate_top_users(customers_with_orders)
 
-    write_results(customer_orders_with_barcodes, unused_barcodes, top_customers)
+    write_results(output_filename, customer_orders_with_barcodes, unused_barcodes, top_customers)
 
 def calculate_top_users(customers_with_orders, amount=5):
     customers = list(map(lambda item:(item[0], len(item[1])), customers_with_orders.items()))
     top_customers = sorted(customers, key=lambda item:item[1], reverse=True)[:amount]
     return top_customers
 
-def write_results(customer_orders_with_barcodes, unused_barcodes, top_customers):
+def write_results(output_filename, customer_orders_with_barcodes, unused_barcodes, top_customers):
     sys.stdout.write('The top 5 users were:\n')
     sys.stdout.write('\n'.join(f'{x[0]}, {x[1]}' for x in top_customers) + '\n')
 
@@ -102,4 +97,7 @@ def process_barcodes():
 
 
 if __name__ == '__main__':
-    main()
+    output_filename = 'output.csv'
+    if len(sys.argv) > 1:
+        output_filename = sys.argv[1]
+    main(output_filename)

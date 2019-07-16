@@ -32,9 +32,22 @@ def write_results(customer_orders_with_barcodes, unused_barcodes, top_customers)
     sys.stdout.write('The top 5 users were:\n')
     sys.stdout.write('\n'.join(f'{x[0]}, {x[1]}' for x in top_customers) + '\n')
 
-    for customer,orders in customer_orders_with_barcodes.items():
-        for order, barcodes in orders.items():
-            print(customer + ',' + order + ',' + ','.join(barcodes))
+    output_filename = 'output.csv'
+    with open(output_filename, 'w', newline='') as output_file:
+        fieldnames = ['customer_id', 'order_id', 'barcodes']
+        writer = csv.writer(output_file)
+        writer.writerow(fieldnames)
+        for customer,orders in customer_orders_with_barcodes.items():
+            for order, barcodes in orders.items():
+                row = flatten([customer, order, barcodes])
+                writer.writerow(row)
+
+def flatten(list_param):
+  for item in list_param:
+    if isinstance(item, list):
+      for subitem in item: yield subitem
+    else:
+      yield item
 
 def aggregate_data(customers_with_orders, orders_with_barcodes):
     customer_orders_with_barcodes = {}

@@ -19,12 +19,12 @@ def main():
     
     customer_orders_with_barcodes = aggregate_data(customers_with_orders, orders_with_barcodes)
 
+    write_results(customer_orders_with_barcodes, unused_barcodes)
+
+def write_results(customer_orders_with_barcodes, unused_barcodes):
     for customer,orders in customer_orders_with_barcodes.items():
         for order, barcodes in orders.items():
-            if barcodes:
-                print(customer + ',' + order + ',' + ','.join(barcodes))
-            else:
-                print(customer + ',' + order + ',')
+            print(customer + ',' + order + ',' + ','.join(barcodes))
 
 def aggregate_data(customers_with_orders, orders_with_barcodes):
     customer_orders_with_barcodes = {}

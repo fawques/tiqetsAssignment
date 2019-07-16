@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import sys
 import csv
 from collections import defaultdict
 
@@ -9,7 +10,12 @@ def main():
     order_barcode = dict()
 
     (duplicated_barcodes, unused_barcodes, orders_with_barcodes) = process_barcodes()
+    if duplicated_barcodes:
+        sys.stderr.write("Ignoring duplicated barcodes:\n" + '\n'.join(duplicated_barcodes) + '\n')
+    
     (customers_with_orders, wrong_orders) = process_orders(orders_with_barcodes)
+    if wrong_orders:
+        sys.stderr.write("Ignoring orders without barcodes:\n" + '\n'.join(wrong_orders) + '\n')
     
     customer_orders_with_barcodes = aggregate_data(customers_with_orders, orders_with_barcodes)
 

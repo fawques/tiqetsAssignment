@@ -11,16 +11,15 @@ def main():
     (duplicated_barcodes, unused_barcodes, orders_with_barcodes) = process_barcodes()
 
 
-    (customer_orders, wrong_orders) = process_orders(orders_with_barcodes)
+    (customers_with_orders, wrong_orders) = process_orders(orders_with_barcodes)
     
     
     
     customer_orders_with_barcodes = dict()
-    for customer, orders in customer_orders.items():
-        customer_orders_final = {}
+    for customer, orders in customers_with_orders.items():
+        customer_orders_with_barcodes[customer] = {}
         for order in orders:
-            customer_orders_final[order] = orders_with_barcodes.get(order)
-        customer_orders_with_barcodes[customer] = customer_orders_final
+            customer_orders_with_barcodes[customer].update({order : orders_with_barcodes[order]})
 
     for customer,orders in customer_orders_with_barcodes.items():
         for order, barcodes in orders.items():
@@ -31,7 +30,7 @@ def main():
 
 def process_orders(orders_with_barcodes):
     wrong_orders = set()
-    customer_orders = defaultdict(lambda: list())
+    customers_with_orders = defaultdict(lambda: list())
 
     with open('orders.csv') as csv_file:
         orders = csv.DictReader(csv_file, delimiter=',')
@@ -43,8 +42,8 @@ def process_orders(orders_with_barcodes):
                 wrong_orders.add(order)
                 continue
 
-            customer_orders[customer].append(order)
-    return (customer_orders, wrong_orders)
+            customers_with_orders[customer].append(order)
+    return (customers_with_orders, wrong_orders)
 
 def process_barcodes():
     duplicated_barcodes = set()

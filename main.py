@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import csv
+from collections import defaultdict
 
 def main():
     unique_barcodes = set()
@@ -29,8 +30,8 @@ def main():
                 print(customer + ',' + order + ',')
 
 def process_orders(orders_with_barcodes):
-    customer_orders = dict()
     wrong_orders = set()
+    customer_orders = defaultdict(lambda: list())
 
     with open('orders.csv') as csv_file:
         orders = csv.DictReader(csv_file, delimiter=',')
@@ -42,16 +43,14 @@ def process_orders(orders_with_barcodes):
                 wrong_orders.add(order)
                 continue
 
-            if customer not in customer_orders.keys():
-                customer_orders[customer] = []
             customer_orders[customer].append(order)
     return (customer_orders, wrong_orders)
 
 def process_barcodes():
     duplicated_barcodes = set()
-    orders_with_barcodes = dict()
     unique_barcodes = set()
     unused_barcodes = set()
+    orders_with_barcodes = defaultdict(lambda: list())
     
     with open('barcodes.csv') as csv_file:
         barcodes = csv.DictReader(csv_file, delimiter=',')
@@ -66,8 +65,6 @@ def process_barcodes():
                 duplicated_barcodes.add(barcode)
 
             if order:
-                if order not in orders_with_barcodes.keys():
-                    orders_with_barcodes[order] = []
                 orders_with_barcodes[order].append(barcode)
             else:
                 unused_barcodes.add(barcode)

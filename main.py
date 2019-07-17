@@ -27,6 +27,8 @@ def write_results(output_filename, customer_orders_with_barcodes, unused_barcode
     sys.stdout.write('The top 5 users were:\n')
     sys.stdout.write('\n'.join(f'{x[0]}, {x[1]}' for x in top_customers) + '\n')
 
+    sys.stdout.write(f'Unused barcodes: {len(unused_barcodes)}\n')
+
     output_filename = 'output.csv'
     with open(output_filename, 'w', newline='') as output_file:
         fieldnames = ['customer_id', 'order_id', 'barcodes']
